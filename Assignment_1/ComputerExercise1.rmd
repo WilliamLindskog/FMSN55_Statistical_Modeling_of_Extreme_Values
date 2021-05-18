@@ -63,7 +63,11 @@ var100 <- t(z100_delt)%*%portpirie$models$fit1$results$hessian%*%z100_delt
 ```
 
 #Q9 Delta Method
-Can't find delta in options
+Analyze - confidence interval - normal approx
+
+10 year = (4.1884, 4.404)
+100 year = (4.3771, 4.9997)
+
 #Q10 Profile Likelyhood
 ```{r}
 ci(portpirie$models$fit1,type="return.level",return.period = 100,method="proflik",nint=100,xrange=c(4,6))
