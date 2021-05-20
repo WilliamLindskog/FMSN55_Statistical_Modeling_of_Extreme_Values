@@ -1,0 +1,124 @@
+---
+title: "Computer Exercise 1"
+author: "Tofig Mamedov & William Lindskog"
+date: '2021-04-27'
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+load("data/portpdata.Rdata)
+```
+
+## Computer Assignment 1 - Report
+
+Introduction...
+
+```{r}
+portpirie$models$fit1$results
+solve(portpirie$models$fit1$results$hessian)
+```
+
+#Q5 Confidence Intervals
+
+You can also embed plots, for example:
+
+```{r question 5}
+ci(portpirie$models$fit1, type = "parameter")
+```
+Results seem to agree as both CI are equal. Same methods but alternative R commands.
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+#Q7 Profile Likelihood CI
+
+```{r}
+ci(portpirie$models$fit1, type = 'parameter', method = "proflik", which.par=3,xrange=c(-0.5,0.5))
+```
+```{r}
+ci(portpirie$models$fit1, type = 'parameter', method = 'proflik',which.par=3,xrange=c(-0.5,0.5))
+```
+
+#Q8 ML Estimate of 10 and 100 year return levels
+```{r}
+params <- portpirie$models$fit1$results$par
+y_10 <- -log(0.9)
+y_100 <- -log(0.99)
+z_10 <- params[1] - params[2]/params[3]*(1-y_10^-params[3])
+z_100 <- params[1] - params[2]/params[3]*(1-y_100^-params[3])
+# As per page 56 in the book. z_p is the return?
+# For variance
+
+z10_delt = c(1, -1/params[3]*(1-y_10^-params[3]),params[2]*params[3]^-2*(1-y_10^-params[3])-params[2]/params[3]*y_10^-params[3]*log(y_10) )
+var10 <- t(z10_delt)%*%portpirie$models$fit1$results$hessian%*%z10_delt
+
+z100_delt = c(1, -1/params[3]*(1-y_100^-params[3]),params[2]*params[3]^-2*(1-y_100^-params[3])-params[2]/params[3]*y_100^-params[3]*log(y_100) )
+var100 <- t(z100_delt)%*%portpirie$models$fit1$results$hessian%*%z100_delt
+```
+#Q9 Delta Method
+Can't find delta in options
+#Q10 Profile Likelyhood
+```{r}
+ci(portpirie$models$fit1,type="return.level",return.period = 100,method="proflik",nint=100,xrange=c(4,6))
+```
+10-year return level: 4.296
+95 % CI: (4.2051,4.4441)" 
+100-year return level: 4.688
+95 % CI: (4.4921,5.2595)
+
+# Q11 - Upper Endpoint
+The upper endpoint of the distribution is when p goes to infinity, meaning 1/p goes to zero. As per page 56 in the book this return level can be calculated through ML.
+```{r}
+z0 <- params[1]-(params[2]/params[3])
+z0
+```
+z0 is 7.83
+
+# Q12 - CI for upper bound
+Following the method provided in the book we get
+```{r}
+
+```
+
+# Q13 Diagnostic Plots
+Plots are too small to see anything
+# Q14 Older Diagnostic Plots
+```{r}
+par(mfrow=c(2,2))
+plot(portpirie$models$fit1,type='probprob',main='Probability Plot')
+plot(portpirie$models$fit1,type='qq',main='Quantile Plot')
+plot(portpirie$models$fit1,type='rl',main='Return Level Plot')
+plot(portpirie$models$fit1,type='hist',main='Histogram Plot')
+```
+
+# Q15 ML of Gumbel Distribution
+```{r}
+gumbelparams = portpirie$models$fit2$results$par
+gumbelparams[1]
+gumbelparams[2]
+```
+
+# Q16 Covariance Matrix
+```{r}
+portpirie$models$fit2$results$hessian
+```
+# Q17 Confidence Interval
+Based on the information matrix. Which method is relevant?
+```{r}
+portpirie$models$fit2$results$hessian
+```
+# Q18 Gumbel plots
+
+```{r}
+par(mfrow=c(2,2))
+plot(portpirie$models$fit2,type='probprob',main='Probability Plot')
+plot(portpirie$models$fit2,type='qq',main='Quantile Plot')
+plot(portpirie$models$fit2,type='rl',main='Return Level Plot')
+plot(portpirie$models$fit2,type='hist',main='Histogram Plot')
+```
+
+# Q19 Likelihood Ratio Test
